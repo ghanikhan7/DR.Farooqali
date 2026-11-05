@@ -1,0 +1,30 @@
+# Dependencies
+node_modules
+.pnp
+.pnp.js
+
+# Build output
+dist
+dist-ssr
+*.local
+*.tsbuildinfo
+
+# Environment variables & secrets (NEVER commit .env or private keys)
+.env
+.env.*
+!.env.example
+
+# Firebase secrets & cache
+*firebase-adminsdk*.json
+serviceAccountKey.json
+.firebase/
+firebase-debug.log*
+firestore-debug.log*
+
+# Editor & OS files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+Thumbs.db
+

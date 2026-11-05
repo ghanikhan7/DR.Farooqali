@@ -1,0 +1,161 @@
+rules_version = '2';
+
+// ============================================================================
+// Sudha Clinic (Dr. Syed Farooq Ali) — Cloud Firestore Security Rules
+// Project: drfarooqali
+// Security Model: Option B — Strict Firebase Admin UID Authorization
+// Authorized Admin UID: X2qros73RaYz1tEud3oToIjcusg1
+//
+// Access Control Policy:
+// 1. clinic_settings/consultation:
+//    - Public read (get only) for consultation fee display.
+//    - Create/Update restricted strictly to the authorized administrator UID.
+//    - Delete disallowed.
+// 2. clinic_settings/general:
+//    - Public read (get only) for clinic and doctor name display.
+//    - Create/Update restricted strictly to the authorized administrator UID.
+//    - Delete disallowed.
+// 3. appointment_requests/{appointmentId}:
+//    - Public write-only create for validated pending appointments.
+//    - Read (get/list) and status updates restricted strictly to authorized Admin UID.
+//    - Delete disallowed.
+// 4. Default Deny:
+//    - All other collections, documents, and operations are denied.
+// ============================================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper: checks whether the request comes strictly from the authorized clinic administrator UID.
+    function isAuthorizedAdmin() {
+      return request.auth != null
+        && request.auth.uid == 'X2qros73RaYz1tEud3oToIjcusg1';
+    }
+
+    // Validate consultation fee document (clinic_settings/consultation)
+    function isValidConsultationSettings(data) {
+      let allowedKeys = [
+        'consultation_fee',
+        'currency',
+        'updated_at',
+        'updated_by'
+      ];
+
+      return data.keys().hasOnly(allowedKeys)
+        && data.consultation_fee is number
+        && data.consultation_fee >= 0
+        && data.consultation_fee <= 100000
+        && data.currency == 'INR'
+        && data.updated_by == request.auth.uid
+        && data.updated_at == request.time;
+    }
+
+    // Validate general clinic settings (clinic_settings/general)
+    function isValidGeneralClinicSettings(data) {
+      let allowedKeys = [
+        'clinic_name',
+        'doctor_name',
+        'updated_at',
+        'updated_by'
+      ];
+
+      return data.keys().hasOnly(allowedKeys)
+        && data.clinic_name is string
+        && data.clinic_name.size() >= 2
+        && data.clinic_name.size() <= 120
+        && data.doctor_name is string
+        && data.doctor_name.size() >= 2
+        && data.doctor_name.size() <= 120
+        && data.updated_by == request.auth.uid
+        && data.updated_at == request.time;
+    }
+
+    // Validate public appointment request creation (appointment_requests/{appointmentId})
+    function isValidAppointmentRequest(data) {
+      let allowedKeys = [
+        'patient_name',
+        'phone_number',
+        'appointment_date',
+        'preferred_session',
+        'message',
+        'status',
+        'timezone',
+        'language',
+        'submitted_at'
+      ];
+
+      return data.keys().hasOnly(allowedKeys)
+        && data.patient_name is string
+        && data.patient_name.size() >= 2
+        && data.patient_name.size() <= 120
+        && data.phone_number is string
+        && data.phone_number.size() >= 10
+        && data.phone_number.size() <= 20
+        && data.appointment_date is string
+        && data.appointment_date.matches('^\\d{4}-\\d{2}-\\d{2}$')
+        && data.preferred_session in ['morning', 'evening']
+        && (data.message == null || (data.message is string && data.message.size() <= 500))
+        && data.status == 'pending'
+        && data.timezone == 'Asia/Kolkata'
+        && data.language in ['en', 'ur']
+        && data.submitted_at == request.time;
+    }
+
+    // Validate admin status update on an existing appointment record
+    function isValidAdminAppointmentStatusUpdate() {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])
+        && request.resource.data.status in ['pending', 'confirmed', 'completed', 'cancelled'];
+    }
+
+    // 1. Publicly Readable Consultation Fee Document: clinic_settings/consultation
+    match /clinic_settings/consultation {
+      // Public visitors can read the consultation fee document
+      allow get: if true;
+      allow list: if false;
+
+      // Only the specifically authorized administrator UID can create or update the consultation fee
+      allow create, update: if isAuthorizedAdmin()
+        && isValidConsultationSettings(request.resource.data);
+
+      // Never allow deleting clinic settings
+      allow delete: if false;
+    }
+
+    // 2. Publicly Readable General Clinic Settings Document: clinic_settings/general
+    match /clinic_settings/general {
+      // Public visitors can read clinic name and doctor name
+      allow get: if true;
+      allow list: if false;
+
+      // Only the specifically authorized administrator UID can update clinic settings
+      allow create, update: if isAuthorizedAdmin()
+        && isValidGeneralClinicSettings(request.resource.data);
+
+      // Never allow deleting clinic settings
+      allow delete: if false;
+    }
+
+    // Deny access to any other documents inside clinic_settings
+    match /clinic_settings/{otherDoc} {
+      allow read, write: if false;
+    }
+
+    // 3. Appointment Requests Collection: appointment_requests/{appointmentId}
+    match /appointment_requests/{appointmentId} {
+      // Public website visitors can ONLY create validated pending appointment requests
+      allow create: if isValidAppointmentRequest(request.resource.data);
+
+      // Only the specifically authorized administrator UID can view or update appointment status
+      allow read: if isAuthorizedAdmin();
+      allow update: if isAuthorizedAdmin() && isValidAdminAppointmentStatusUpdate();
+
+      // Never allow deleting appointment records
+      allow delete: if false;
+    }
+
+    // Deny all access to any other collections by default
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-deep-emerald: #123D35;
+    --color-forest-green: #1D5B4A;
+    --color-sage-green: #A7C4B5;
+    --color-warm-ivory: #F8F7F2;
+    --color-white: #FFFFFF;
+    --color-dark-text: #182522;
+    --color-muted-text: #66736D;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5.5rem;
+  }
+
+  body {
+    background-color: #F8F7F2;
+    color: #182522;
+    font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* Urdu RTL typography refinements for Noto Nastaliq Urdu */
+  html[lang='ur'] body {
+    font-family: 'Noto Nastaliq Urdu', 'DM Sans', serif;
+    line-height: 2.25;
+  }
+
+  html[lang='ur'] h1,
+  html[lang='ur'] h2,
+  html[lang='ur'] h3,
+  html[lang='ur'] h4 {
+    font-family: 'Noto Nastaliq Urdu', serif;
+    line-height: 1.85 !important;
+    letter-spacing: 0 !important;
+  }
+
+  html[lang='ur'] p,
+  html[lang='ur'] li,
+  html[lang='ur'] dd,
+  html[lang='ur'] label,
+  html[lang='ur'] button,
+  html[lang='ur'] a {
+    line-height: 2.15;
+  }
+
+  html[lang='ur'] .eyebrow-text {
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+    font-size: 0.95rem;
+  }
+}
+
+/* Subtle architectural grid pattern for deep emerald panels */
+.bg-architectural-grid {
+  background-image: radial-gradient(rgba(167, 196, 181, 0.16) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.bg-editorial-lines {
+  background-image: repeating-linear-gradient(
+    135deg,
+    transparent,
+    transparent 36px,
+    rgba(167, 196, 181, 0.07) 36px,
+    rgba(167, 196, 181, 0.07) 37px
+  );
+}
+
