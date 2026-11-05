@@ -1,6 +1,14 @@
 export type Language = 'en' | 'ur';
 export type SessionId = 'morning' | 'evening';
 
+/**
+ * Single centralized default consultation fee and currency for Sudha Clinic.
+ * Used across the homepage, appointment booking form, fee cards, translations,
+ * and as the baseline Firestore fallback.
+ */
+export const DEFAULT_CONSULTATION_FEE = 200;
+export const DEFAULT_CURRENCY = 'INR';
+
 export interface BilingualService {
   id: string;
   title: {
@@ -96,6 +104,10 @@ export interface ClinicConfig {
   hours: {
     en: string;
     ur: string;
+  };
+  consultationFee: {
+    amount: number;
+    currency: string;
   };
   approvedServices: BilingualService[];
 }
@@ -195,6 +207,10 @@ export const CLINIC_CONFIG: ClinicConfig = {
   hours: {
     en: 'Morning: 10:00 AM – 1:00 PM · Evening: 9:00 PM – 12:00 AM',
     ur: 'صبح: 10:00 تا 1:00 بجے · رات: 9:00 تا 12:00 بجے',
+  },
+  consultationFee: {
+    amount: DEFAULT_CONSULTATION_FEE,
+    currency: DEFAULT_CURRENCY,
   },
   approvedServices: [],
 };

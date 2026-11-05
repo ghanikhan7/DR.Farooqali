@@ -1269,7 +1269,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                           Consultation Fee
                         </h2>
                         <p className="text-sm text-[#66736D] leading-relaxed">
-                          Displayed publicly on the appointment booking section in both English and Urdu. Initially ₹100.
+                          Displayed publicly on the appointment booking section in both English and Urdu. Standard fee: ₹{DEFAULT_CONSULTATION_FEE}.
                         </p>
 
                         <div className="rounded-2xl bg-[#123D35] text-white p-6 border border-[#1D5B4A] shadow-sm">
@@ -1336,7 +1336,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                   setIsEditingFee(true);
                                   if (feeFeedback) setFeeFeedback(null);
                                 }}
-                                placeholder="100"
+                                placeholder={String(DEFAULT_CONSULTATION_FEE)}
                                 className="w-full pl-9 pr-4 py-3.5 rounded-xl bg-white border border-[#DCE5E0] focus:border-[#1D5B4A] focus:outline-none focus:ring-2 focus:ring-[#1D5B4A]/20 text-[#182522] text-base font-semibold"
                               />
                             </div>

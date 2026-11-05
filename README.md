@@ -69,7 +69,7 @@ Built with **React 18**, **TypeScript**, **Vite**, **Tailwind CSS**, **Framer Mo
 3. Enter your administrator email and password and click **Sign In to Dashboard**.
 4. Once authenticated, you are redirected to the **Admin Portal** with three sections in the sidebar:
    - **Appointments (`/admin`)**: Search by patient name/phone, filter by date/session/status, refresh live records, view full appointment details, message patients on WhatsApp with one click, and update status (`Pending`, `Confirmed`, `Completed`, `Cancelled`).
-   - **Clinic Settings (`/admin/settings`)**: Update the public **Consultation Fee** (initially `₹100`), update **Clinic Name** and **Doctor Name**, and view read-only clinic session timings (`Morning: 10:00 AM – 1:00 PM`, `Evening: 9:00 PM – 12:00 AM`).
+   - **Clinic Settings (`/admin/settings`)**: Update the public **Consultation Fee** (initially `₹200`), update **Clinic Name** and **Doctor Name**, and view read-only clinic session timings (`Morning: 10:00 AM – 1:00 PM`, `Evening: 9:00 PM – 12:00 AM`).
    - **Admin Profile (`/admin/profile`)**: View account status, copy your Admin UID, change your password, or change your login email.
 5. Click **Logout** in the top header or sidebar at any time to clear your authenticated session.
 

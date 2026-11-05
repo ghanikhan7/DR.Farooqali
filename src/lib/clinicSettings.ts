@@ -7,14 +7,17 @@ import {
   Timestamp,
 } from 'firebase/firestore';
 import { db, isFirebaseConfigured } from './firebase';
-import { CLINIC_CONFIG } from '../config/clinicConfig';
+import {
+  CLINIC_CONFIG,
+  DEFAULT_CONSULTATION_FEE,
+  DEFAULT_CURRENCY,
+} from '../config/clinicConfig';
 
 export const CLINIC_SETTINGS_COLLECTION = 'clinic_settings';
 export const CONSULTATION_DOC_ID = 'consultation';
 export const GENERAL_SETTINGS_DOC_ID = 'general';
 
-export const DEFAULT_CONSULTATION_FEE = 100;
-export const DEFAULT_CURRENCY = 'INR';
+export { DEFAULT_CONSULTATION_FEE, DEFAULT_CURRENCY };
 
 export interface ConsultationSettingsData {
   consultation_fee: number;
@@ -31,7 +34,7 @@ export interface GeneralClinicSettingsData {
 }
 
 /**
- * Formats a numeric INR amount cleanly (e.g. 100 -> "₹100", 150.5 -> "₹150.50").
+ * Formats a numeric INR amount cleanly (e.g. 200 -> "₹200", 150.5 -> "₹150.50").
  */
 export function formatConsultationFee(
   amount: number,
@@ -53,7 +56,7 @@ export function formatConsultationFee(
 
 /**
  * Fetches the current consultation fee once from `clinic_settings/consultation`,
- * returning a safe fallback of ₹100 if the document does not exist or fails to load.
+ * returning a safe fallback of ₹200 if the document does not exist or fails to load.
  */
 export async function fetchConsultationSettings(): Promise<ConsultationSettingsData> {
   if (!isFirebaseConfigured || !db) {
@@ -94,7 +97,7 @@ export async function fetchConsultationSettings(): Promise<ConsultationSettingsD
 
 /**
  * Subscribes in real time to `clinic_settings/consultation`.
- * Safely falls back to ₹100 if the document hasn't been created yet or cannot be read.
+ * Safely falls back to ₹200 if the document hasn't been created yet or cannot be read.
  */
 export function subscribeToConsultationFee(
   onData: (settings: ConsultationSettingsData) => void
@@ -134,7 +137,7 @@ export function subscribeToConsultationFee(
       }
     },
     () => {
-      // On permission or network error, fall back gracefully to ₹100
+      // On permission or network error, fall back gracefully to ₹200
       onData({
         consultation_fee: DEFAULT_CONSULTATION_FEE,
         currency: DEFAULT_CURRENCY,
